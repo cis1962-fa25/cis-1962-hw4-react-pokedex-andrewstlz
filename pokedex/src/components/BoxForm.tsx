@@ -1,0 +1,79 @@
+import { useState } from "react";
+import type { InsertBoxEntry } from "../types/types";
+
+interface BoxFormProps {
+  pokemonId: number;
+  onSubmit: (data: InsertBoxEntry) => void;
+  onCancel: () => void;
+}
+
+export default function BoxForm({ pokemonId, onSubmit, onCancel }: BoxFormProps) {
+  const [location, setLocation] = useState("");
+  const [level, setLevel] = useState(1);
+  const [notes, setNotes] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!location.trim()) {
+      setError("Location cannot be empty.");
+      return;
+    }
+    if (level < 1 || level > 100) {
+      setError("Level must be between 1 and 100.");
+      return;
+    }
+
+    const entry: InsertBoxEntry = {
+      pokemonId,
+      location: location.trim(),
+      level,
+      notes: notes.trim() || undefined,
+      createdAt: new Date().toISOString(),
+    };
+
+    setSubmitting(true);
+    onSubmit(entry);
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <h3>Catch Pokémon</h3>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <label>
+        Location
+        <input value={location} onChange={(e) => setLocation(e.target.value)} />
+      </label>
+
+      <label>
+        Level
+        <input
+          type="number"
+          min={1}
+          max={100}
+          value={level}
+          onChange={(e) => setLevel(Number(e.target.value))}
+        />
+      </label>
+
+      <label>
+        Notes (optional)
+        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+      </label>
+
+      <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+        <button type="button" onClick={onCancel} disabled={submitting}>
+          Cancel
+        </button>
+        <button type="submit" disabled={submitting}>
+          {submitting ? "Saving..." : "Save"}
+        </button>
+      </div>
+    </form>
+  );
+}
