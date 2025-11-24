@@ -1,7 +1,7 @@
 import type { Pokemon, BoxEntry, InsertBoxEntry, UpdateBoxEntry } from "../types/types";
 
 export default class PokemonAPI {
-  private static baseUrl = "https://hw4.cis1962.esinx.net/api/";
+  private static baseUrl = "https://hw4.cis1962.esinx.net/api";
   private static token: string | null = null;
 
   static setToken(token: string) {
