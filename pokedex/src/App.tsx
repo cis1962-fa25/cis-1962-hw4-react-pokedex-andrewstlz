@@ -32,7 +32,7 @@ function App() {
   useEffect(() => {
     const loadLookup = async () => {
       try {
-        const list = await PokemonAPI.listPokemon(200, 0);
+        const list = await PokemonAPI.listPokemon(1000, 0);
         const map = new Map(list.map((p) => [p.id, p]));
         setIdToPokemon(map);
       } catch {

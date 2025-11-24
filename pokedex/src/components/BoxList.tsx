@@ -17,7 +17,8 @@ export default function BoxList({
   return (
     <div>
       {entries.map((entry) => {
-        const pokemon = pokemonMap[entry.pokemonId];
+        const pokemonId = Number(entry.pokemonId);
+        const pokemon = pokemonMap[pokemonId];
 
         if (!pokemon) {
           return (
