@@ -6,9 +6,8 @@ import type {
 } from '../types/types';
 
 export default class PokemonAPI {
-    private static baseUrl = 'https://cis1962-hw4-server.esinx.net/api/';
+    private static baseUrl = 'https://hw4.cis1962.esinx.net/api/';
     private static token: string | null = null;
-
     static setToken(token: string) {
         this.token = token;
     }
@@ -80,37 +79,39 @@ export default class PokemonAPI {
         }
     }
 
+    // NO MORE LEADING SLASHES ANYWHERE ↓↓↓
+
     static async listPokemon(
         limit: number,
         offset: number,
     ): Promise<Pokemon[]> {
-        return this.get<Pokemon[]>(`/pokemon/?limit=${limit}&offset=${offset}`);
+        return this.get<Pokemon[]>(`pokemon/?limit=${limit}&offset=${offset}`);
     }
 
     static async getPokemon(name: string): Promise<Pokemon> {
-        return this.get<Pokemon>(`/pokemon/${name}`);
+        return this.get<Pokemon>(`pokemon/${name}`);
     }
 
     static async listBoxEntries(): Promise<string[]> {
-        return this.get<string[]>(`/box/`);
+        return this.get<string[]>(`box/`);
     }
 
     static async createBoxEntry(data: InsertBoxEntry): Promise<string> {
-        return this.post<string>(`/box/`, data);
+        return this.post<string>(`box/`, data);
     }
 
     static async getBoxEntry(id: string): Promise<BoxEntry> {
-        return this.get<BoxEntry>(`/box/${id}`);
+        return this.get<BoxEntry>(`box/${id}`);
     }
 
     static async updateBoxEntry(
         id: string,
         data: UpdateBoxEntry,
     ): Promise<void> {
-        return this.put<void>(`/box/${id}`, data);
+        return this.put<void>(`box/${id}`, data);
     }
 
     static async deleteBoxEntry(id: string): Promise<void> {
-        return this.del(`/box/${id}`);
+        return this.del(`box/${id}`);
     }
 }
