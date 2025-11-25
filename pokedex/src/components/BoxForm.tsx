@@ -1,16 +1,24 @@
 import { useState } from "react";
-import type { InsertBoxEntry } from "../types/types";
+import type { InsertBoxEntry, UpdateBoxEntry, BoxEntry } from "../types/types";
 
 interface BoxFormProps {
   pokemonId: number;
-  onSubmit: (data: InsertBoxEntry) => void;
+  initialEntry?: BoxEntry;
+  onSubmit: (data: InsertBoxEntry | UpdateBoxEntry) => void;
   onCancel: () => void;
 }
 
-export default function BoxForm({ pokemonId, onSubmit, onCancel }: BoxFormProps) {
-  const [location, setLocation] = useState("");
-  const [level, setLevel] = useState(1);
-  const [notes, setNotes] = useState("");
+export default function BoxForm({
+  pokemonId,
+  initialEntry,
+  onSubmit,
+  onCancel,
+}: BoxFormProps) {
+  const isEditing = Boolean(initialEntry);
+
+  const [location, setLocation] = useState(initialEntry?.location ?? "");
+  const [level, setLevel] = useState(initialEntry?.level ?? 1);
+  const [notes, setNotes] = useState(initialEntry?.notes ?? "");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -27,27 +35,39 @@ export default function BoxForm({ pokemonId, onSubmit, onCancel }: BoxFormProps)
       return;
     }
 
-    const entry: InsertBoxEntry = {
-      pokemonId,
-      location: location.trim(),
-      level,
-      notes: notes.trim() || undefined,
-      createdAt: new Date().toISOString(),
-    };
-
     setSubmitting(true);
-    onSubmit(entry);
+
+    if (isEditing) {
+      const data: UpdateBoxEntry = {
+        location: location.trim(),
+        level,
+        notes: notes.trim() || undefined,
+      };
+      onSubmit(data);
+    } else {
+      const data: InsertBoxEntry = {
+        pokemonId,
+        location: location.trim(),
+        level,
+        notes: notes.trim() || undefined,
+        createdAt: new Date().toISOString(),
+      };
+      onSubmit(data);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Catch Pokémon</h3>
+      <h3>{isEditing ? "Edit Entry" : "Catch Pokémon"}</h3>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       <label>
         Location
-        <input value={location} onChange={(e) => setLocation(e.target.value)} />
+        <input
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+        />
       </label>
 
       <label>
@@ -63,7 +83,10 @@ export default function BoxForm({ pokemonId, onSubmit, onCancel }: BoxFormProps)
 
       <label>
         Notes (optional)
-        <textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
 
       <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
@@ -71,7 +94,7 @@ export default function BoxForm({ pokemonId, onSubmit, onCancel }: BoxFormProps)
           Cancel
         </button>
         <button type="submit" disabled={submitting}>
-          {submitting ? "Saving..." : "Save"}
+          {submitting ? "Saving..." : isEditing ? "Save Changes" : "Save"}
         </button>
       </div>
     </form>
